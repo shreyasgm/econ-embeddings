@@ -1,4 +1,4 @@
-# Entity Embeddings for Economic Classification Codes
+# Econ-Embeddings: Semantic Representations of Economic Classification Systems
 
 Pre-computed 3,072-dimensional semantic embeddings for economic classification codes, plus a pipeline for generating embeddings for new classification systems.
 
@@ -26,8 +26,8 @@ The enrichment step is the key innovation: raw classification code names and des
 ### Installation
 
 ```bash
-git clone https://github.com/shreyasgm/entity_embeddings.git
-cd entity_embeddings
+git clone https://github.com/shreyasgm/econ-embeddings.git
+cd econ-embeddings
 pip install -r requirements.txt
 ```
 
@@ -169,12 +169,12 @@ entity_embeddings/
 If you use anything from this repository, please cite it as:
 
 ```bibtex
-@software{gadginmatha2026entityembeddings,
+@software{gadginmatha2026econembeddings,
   author       = {Gadgin Matha, Shreyas},
-  title        = {Entity Embeddings for Economic Classification Codes},
+  title        = {Econ-Embeddings: Semantic Representations of Economic Classification Systems},
   year         = {2026},
   publisher    = {GitHub},
-  url          = {https://github.com/shreyasgm/entity_embeddings}
+  url          = {https://github.com/shreyasgm/econ-embeddings}
 }
 ```
 

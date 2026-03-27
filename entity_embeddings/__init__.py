@@ -1,4 +1,4 @@
-"""Entity Embeddings: LLM-enriched semantic embeddings for economic classification codes.
+"""Econ-Embeddings: Semantic Representations of Economic Classification Systems.
 
 Pre-computed 3072-dimensional embeddings for HS products, IPC4 technologies,
 NAICS industries, and OpenAlex scientific concepts, plus a pipeline
