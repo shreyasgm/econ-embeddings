@@ -28,7 +28,7 @@ The enrichment step is the key innovation: raw classification code names and des
 ```bash
 git clone https://github.com/shreyasgm/econ-embeddings.git
 cd econ-embeddings
-pip install -r requirements.txt
+uv sync
 ```
 
 ### Load pre-computed embeddings (no API keys needed)
@@ -160,7 +160,7 @@ entity_embeddings/
 ├── examples/
 │   ├── quickstart.py              # Uses pre-computed data only
 │   └── generate_new_embeddings.py # Full pipeline with API calls
-├── requirements.txt
+├── pyproject.toml
 └── README.md
 ```
 

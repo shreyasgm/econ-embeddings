@@ -1,0 +1,32 @@
+[project]
+name = "econ-embeddings"
+version = "0.1.0"
+description = "Semantic embeddings for economic classification systems"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    # Core data
+    "numpy",
+    "pandas",
+    "pyarrow",
+    # LLM enrichment
+    "openai",
+    "pydantic",
+    # Embedding generation
+    "google-genai",
+    # Utilities
+    "tqdm",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["entity_embeddings"]
+
+[tool.ruff]
+line-length = 99
+
+[tool.ruff.format]
+docstring-code-format = true
