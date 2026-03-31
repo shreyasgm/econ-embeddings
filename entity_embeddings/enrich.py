@@ -35,6 +35,7 @@ logger = logging.getLogger(__name__)
 
 # --- Pydantic model for structured output ---
 
+
 class EnrichmentResponse(BaseModel):
     """Structured output from the enrichment LLM call."""
 
@@ -160,12 +161,8 @@ def enrich_codes(
     tasks = []
     for _, row in df.iterrows():
         sibling_codes = siblings.get(row["category"], [])
-        sibling_rows = df[
-            df["code_id"].isin(sibling_codes) & (df["code_id"] != row["code_id"])
-        ]
-        sibling_names = [
-            f"{r['code_id']} — {r['name']}" for _, r in sibling_rows.iterrows()
-        ]
+        sibling_rows = df[df["code_id"].isin(sibling_codes) & (df["code_id"] != row["code_id"])]
+        sibling_names = [f"{r['code_id']} — {r['name']}" for _, r in sibling_rows.iterrows()]
 
         user_prompt = _build_enrichment_prompt(
             code_id=row["code_id"],
@@ -199,15 +196,17 @@ def enrich_codes(
     for task, response in zip(tasks, responses):
         row = task["row"]
         embedding_text = f"{row['name']}. {response.enriched_description}"
-        output_rows.append({
-            "code_id": row["code_id"],
-            "name": row["name"],
-            "enriched_description": response.enriched_description,
-            "key_activities_or_topics": list(response.key_activities_or_topics),
-            "distinguishing_features": list(response.distinguishing_features),
-            "reasoning": response.reasoning,
-            "embedding_text": embedding_text,
-            "category": row["category"],
-        })
+        output_rows.append(
+            {
+                "code_id": row["code_id"],
+                "name": row["name"],
+                "enriched_description": response.enriched_description,
+                "key_activities_or_topics": list(response.key_activities_or_topics),
+                "distinguishing_features": list(response.distinguishing_features),
+                "reasoning": response.reasoning,
+                "embedding_text": embedding_text,
+                "category": row["category"],
+            }
+        )
 
     return pd.DataFrame(output_rows)

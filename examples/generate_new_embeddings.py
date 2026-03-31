@@ -22,22 +22,24 @@ def example_enrich_and_embed():
 
     # Step 1: Prepare your data as a DataFrame.
     # Required columns: code_id, name, description, category
-    df = pd.DataFrame({
-        "code_id": ["A01", "A02", "B01", "B02"],
-        "name": [
-            "Wheat farming",
-            "Rice farming",
-            "Iron ore mining",
-            "Copper ore mining",
-        ],
-        "description": [
-            "Growing wheat and other cereal grains",
-            "Cultivating rice in paddies",
-            "Extracting iron ore from open-pit and underground mines",
-            "Mining copper ores and concentrates",
-        ],
-        "category": ["Agriculture", "Agriculture", "Mining", "Mining"],
-    })
+    df = pd.DataFrame(
+        {
+            "code_id": ["A01", "A02", "B01", "B02"],
+            "name": [
+                "Wheat farming",
+                "Rice farming",
+                "Iron ore mining",
+                "Copper ore mining",
+            ],
+            "description": [
+                "Growing wheat and other cereal grains",
+                "Cultivating rice in paddies",
+                "Extracting iron ore from open-pit and underground mines",
+                "Mining copper ores and concentrates",
+            ],
+            "category": ["Agriculture", "Agriculture", "Mining", "Mining"],
+        }
+    )
 
     # Step 2: Enrich descriptions.
     # The domain_type tells the LLM what kind of codes these are,

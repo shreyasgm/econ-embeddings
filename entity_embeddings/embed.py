@@ -138,12 +138,14 @@ def top_k_similar(
     for i in range(len(source_codes)):
         top_indices = np.argsort(sim_matrix[i])[::-1][:effective_k]
         for rank, j in enumerate(top_indices, 1):
-            rows.append({
-                "source_code": source_codes.iloc[i]["code_id"],
-                "target_code": target_codes.iloc[j]["code_id"],
-                "target_name": target_codes.iloc[j]["name"],
-                "cosine_similarity": float(sim_matrix[i, j]),
-                "rank": rank,
-            })
+            rows.append(
+                {
+                    "source_code": source_codes.iloc[i]["code_id"],
+                    "target_code": target_codes.iloc[j]["code_id"],
+                    "target_name": target_codes.iloc[j]["name"],
+                    "cosine_similarity": float(sim_matrix[i, j]),
+                    "rank": rank,
+                }
+            )
 
     return pd.DataFrame(rows)

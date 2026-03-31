@@ -32,11 +32,13 @@ def generate_candidates(source: str, target: str) -> None:
     )
 
     # Rename columns to match the candidate file convention
-    df = df.rename(columns={
-        "target_code": "candidate_code",
-        "target_name": "candidate_name",
-        "cosine_similarity": "embedding_similarity",
-    })
+    df = df.rename(
+        columns={
+            "target_code": "candidate_code",
+            "target_name": "candidate_name",
+            "cosine_similarity": "embedding_similarity",
+        }
+    )
 
     out_path = DATA_DIR / f"embedding_candidates_{source}_{target}.parquet"
     df.to_parquet(out_path, index=False)
@@ -44,7 +46,9 @@ def generate_candidates(source: str, target: str) -> None:
 
 
 def main():
-    print(f"Generating top-{K} candidates for all {len(DOMAINS)}×{len(DOMAINS)} = {len(DOMAINS)**2} domain pairs\n")
+    print(
+        f"Generating top-{K} candidates for all {len(DOMAINS)}×{len(DOMAINS)} = {len(DOMAINS) ** 2} domain pairs\n"
+    )
 
     for source, target in product(DOMAINS, repeat=2):
         generate_candidates(source, target)
