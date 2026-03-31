@@ -6,3 +6,5 @@ for generating new embeddings for other classification systems.
 """
 
 __version__ = "0.1.0"
+
+from entity_embeddings.load import concord

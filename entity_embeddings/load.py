@@ -103,10 +103,11 @@ def load_candidates(source: str, target: str) -> pd.DataFrame:
     pair_name = f"{source}_{target}"
     path = DATA_DIR / f"embedding_candidates_{pair_name}.parquet"
     if not path.exists():
-        available = [p.stem.replace("embedding_candidates_", "") for p in DATA_DIR.glob("embedding_candidates_*.parquet")]
-        raise FileNotFoundError(
-            f"No candidates for pair '{pair_name}'. Available: {available}"
-        )
+        available = [
+            p.stem.replace("embedding_candidates_", "")
+            for p in DATA_DIR.glob("embedding_candidates_*.parquet")
+        ]
+        raise FileNotFoundError(f"No candidates for pair '{pair_name}'. Available: {available}")
     return pd.read_parquet(path)
 
 
@@ -135,3 +136,93 @@ def cosine_similarity(
 
     sim = norm_a @ norm_b.T
     return sim, codes_a, codes_b
+
+
+def concord(
+    codes: list[str],
+    source: str,
+    target: str,
+    k: int = 5,
+    threshold: float | None = None,
+) -> pd.DataFrame:
+    """Map codes from one domain to another using embedding similarity.
+
+    A high-level convenience function that handles loading, subsetting,
+    and similarity computation internally.
+
+    Args:
+        codes: List of code strings from the source domain (e.g. ["8471", "3004"]).
+        source: Source domain ('concepts', 'ipc4', 'hs', or 'naics').
+        target: Target domain ('concepts', 'ipc4', 'hs', or 'naics').
+        k: Number of top matches to return per code.
+        threshold: Optional minimum similarity score. Matches below this are dropped.
+
+    Returns:
+        DataFrame with columns:
+            - source_code: The input code
+            - target_code: Matched code in target domain
+            - target_name: Human-readable name of target code
+            - similarity: Cosine similarity score
+            - rank: Rank within each source code (1 = best match)
+
+    Raises:
+        ValueError: If source/target domain is invalid or codes are not found.
+    """
+    if source not in DOMAINS:
+        raise ValueError(f"Unknown source domain '{source}'. Choose from: {DOMAINS}")
+    if target not in DOMAINS:
+        raise ValueError(f"Unknown target domain '{target}'. Choose from: {DOMAINS}")
+
+    codes = [str(c) for c in codes]
+
+    # Validate that requested codes exist in the source domain
+    _, source_codes = load_embeddings(source)
+    valid_codes = set(source_codes["code_id"])
+    unknown = set(codes) - valid_codes
+    if unknown:
+        raise ValueError(
+            f"Codes not found in '{source}' domain: {sorted(unknown)}. "
+            f"Example valid codes: {DOMAIN_INFO[source]['example_codes']}"
+        )
+
+    # Pre-computed candidates have 25 matches per code — use fast path when possible
+    if k <= 25:
+        candidates = load_candidates(source, target)
+        result = candidates[candidates["source_code"].isin(codes)].copy()
+        result = result[result["rank"] <= k]
+        result = result.rename(
+            columns={
+                "candidate_code": "target_code",
+                "candidate_name": "target_name",
+                "embedding_similarity": "similarity",
+            }
+        )
+    else:
+        from entity_embeddings.embed import top_k_similar
+
+        src_vectors, src_codes = load_embeddings(source)
+        tgt_vectors, tgt_codes = load_embeddings(target)
+
+        # Subset to requested codes
+        mask = src_codes["code_id"].isin(codes)
+        src_vectors = src_vectors[mask.values]
+        src_codes = src_codes[mask].reset_index(drop=True)
+
+        result = top_k_similar(
+            src_vectors,
+            tgt_vectors,
+            src_codes,
+            tgt_codes,
+            k=k,
+            self_match=(source != target),
+        )
+        result = result.rename(columns={"cosine_similarity": "similarity"})
+
+    if threshold is not None:
+        result = result[result["similarity"] >= threshold]
+
+    return (
+        result[["source_code", "target_code", "target_name", "similarity", "rank"]]
+        .sort_values(["source_code", "rank"])
+        .reset_index(drop=True)
+    )

@@ -11,6 +11,7 @@ No API keys required — uses only the pre-computed data shipped with this repo.
 import numpy as np
 import pandas as pd
 
+from entity_embeddings import concord
 from entity_embeddings.load import (
     cosine_similarity,
     load_candidates,
@@ -107,8 +108,39 @@ def example_4_product_technology_matching():
     print()
 
 
+def example_5_concord():
+    """Use concord() for one-liner cross-domain mapping."""
+    print("=" * 60)
+    print("Example 5: concord() — high-level code concordance")
+    print("=" * 60)
+
+    # Map HS product codes to NAICS industries
+    matches = concord(
+        codes=["8471", "3004", "2709"],
+        source="hs",
+        target="naics",
+        k=5,
+    )
+    print("HS → NAICS (top 5 per code):")
+    print(matches.to_string(index=False))
+    print()
+
+    # With a similarity threshold
+    matches = concord(
+        codes=["G06F", "C12N"],
+        source="ipc4",
+        target="concepts",
+        k=10,
+        threshold=0.6,
+    )
+    print("IPC4 → Scientific concepts (similarity ≥ 0.6):")
+    print(matches.to_string(index=False))
+    print()
+
+
 if __name__ == "__main__":
     example_1_load_and_inspect()
     example_2_cross_domain_similarity()
     example_3_precomputed_candidates()
     example_4_product_technology_matching()
+    example_5_concord()
