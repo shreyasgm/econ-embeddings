@@ -73,17 +73,20 @@ for rank, j in enumerate(top_10, 1):
 
 ### Use pre-computed candidate matches
 
-Top-K candidate matches (IPC4 → each domain) are pre-computed for convenience:
+Top-K candidate matches are pre-computed for all pairwise domain combinations (16 pairs total):
 
 ```python
 from entity_embeddings.load import load_candidates
 
 # Top-25 HS products per IPC4 code
 candidates = load_candidates("ipc4", "hs")
-# DataFrame with: ipc4, candidate_code, candidate_name, embedding_similarity, rank
+# DataFrame with: source_code, candidate_code, candidate_name, embedding_similarity, rank
 
 # Filter to a specific technology
-c12n_products = candidates[candidates["ipc4"] == "C12N"].sort_values("rank")
+c12n_products = candidates[candidates["source_code"] == "C12N"].sort_values("rank")
+
+# Any domain pair works — e.g., HS products → NAICS industries
+hs_naics = load_candidates("hs", "naics")
 ```
 
 ### Generate embeddings for a new classification system
@@ -128,7 +131,7 @@ All pre-computed data lives in `data/`:
 | `enriched_descriptions_{domain}.parquet` | LLM-enriched descriptions with metadata |
 | `embeddings_{domain}.npy` | Embedding vectors, shape (n_codes, 3072) |
 | `embeddings_{domain}_codes.parquet` | Code-to-name mapping (row i ↔ vector i) |
-| `embedding_candidates_ipc4_{domain}.parquet` | Pre-computed top-K matches from IPC4 |
+| `embedding_candidates_{source}_{target}.parquet` | Pre-computed top-K matches for all domain pairs |
 
 ### Enriched description columns
 

@@ -69,10 +69,10 @@ def example_3_precomputed_candidates():
 
     candidates = load_candidates("ipc4", "hs")
     print(f"Total candidate pairs: {len(candidates):,}")
-    print(f"Unique IPC4 codes: {candidates['ipc4'].nunique()}")
+    print(f"Unique IPC4 codes: {candidates['source_code'].nunique()}")
 
     # Top products for C12N (Micro-organisms or Enzymes)
-    c12n = candidates[candidates["ipc4"] == "C12N"].sort_values("rank")
+    c12n = candidates[candidates["source_code"] == "C12N"].sort_values("rank")
     print("\nTop 10 HS products for C12N (Micro-organisms or Enzymes):")
     for _, row in c12n.head(10).iterrows():
         print(
@@ -100,9 +100,9 @@ def example_4_product_technology_matching():
     print("IPC4 technologies most related to HS 3004 (Medicaments):")
     ipc4_desc = load_descriptions("ipc4")
     for _, row in medicaments.head(10).iterrows():
-        name = ipc4_desc[ipc4_desc["code_id"] == row["ipc4"]]["name"].values[0]
+        name = ipc4_desc[ipc4_desc["code_id"] == row["source_code"]]["name"].values[0]
         print(
-            f"  {row['ipc4']} — {name[:45]:<45s} (sim: {row['embedding_similarity']:.3f})"
+            f"  {row['source_code']} — {name[:45]:<45s} (sim: {row['embedding_similarity']:.3f})"
         )
     print()
 

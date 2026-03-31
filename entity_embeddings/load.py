@@ -85,16 +85,16 @@ def load_descriptions(domain: str) -> pd.DataFrame:
 def load_candidates(source: str, target: str) -> pd.DataFrame:
     """Load pre-computed top-K candidate matches between two domains.
 
-    Pre-computed candidates are available for IPC4 as the source domain
-    matched against all four target domains.
+    Pre-computed candidates are available for all pairwise combinations
+    of the four domains (concepts, ipc4, hs, naics).
 
     Args:
-        source: Source domain (currently only 'ipc4' available).
-        target: Target domain ('concepts', 'hs', 'naics', or 'ipc4').
+        source: Source domain ('concepts', 'ipc4', 'hs', or 'naics').
+        target: Target domain ('concepts', 'ipc4', 'hs', or 'naics').
 
     Returns:
         DataFrame with columns:
-            - ipc4: Source IPC4 code
+            - source_code: Source domain code
             - candidate_code: Target domain code
             - candidate_name: Target domain name
             - embedding_similarity: Cosine similarity score
